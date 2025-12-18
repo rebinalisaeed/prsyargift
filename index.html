@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>expay - پرۆفایل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
+        }
+        
+        :root {
+            --primary-light: #667eea;
+            --primary-dark: #764ba2;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --purple-gradient: linear-gradient(135deg, rgba(142, 68, 228, 0.95) 0%, rgba(124, 58, 237, 0.95) 100%);
+            --purple-bg: rgba(142, 68, 228, 0.95);
+            --purple-light: #a855f7;
+            --purple-dark: #7c3aed;
+            --purple-glow: rgba(168, 85, 247, 0.3);
+            --text-dark: #333333;
+            --text-light: #666666;
+            --text-gray: #888888;
+            --text-light-gray: #999999;
+            --border-color: #E0E0E0;
+            --background: #F8F9FA;
+            --white: #FFFFFF;
+            --light-bg: #FEFEFE;
+            --shadow-light: 0 5px 15px rgba(168, 85, 247, 0.1);
+            --shadow-medium: 0 8px 25px rgba(168, 85, 247, 0.15);
+            --glass-bg: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* پەڕەی پرۆفایل */
+        #profile-page {
+            display: none;
+            opacity: 0;
+        }
+        
+        .active-page {
+            display: block !important;
+            opacity: 1 !important;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .container {
+            max-width: 450px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* سەرەوەی پەڕە - گڵاس مۆرفیسم تۆختر */
+        .profile-header {
+            background: var(--purple-gradient);
+            padding: 20px 20px 100px;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: var(--glass-shadow);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+            z-index: -1;
+        }
+        
+        .profile-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo-white {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        
+        .logo-text-white {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--white);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo-ex-white {
+            color: var(--white);
+        }
+        
+        .logo-pay-white {
+            color: var(--white);
+        }
+        
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .header-icon:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* بەشی ناوەڕاستی پرۆفایل */
+        .profile-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 70px;
+        }
+        
+        /* بازنەی پرۆفایل کە لەسەر پاشەڕەنگی مۆرەکە دیارە */
+        .profile-image-main-container {
+            position: relative;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            margin-top: -30px;
+            margin-bottom: 25px;
+        }
+        
+        .profile-image-large-container {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 4px solid var(--white);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .profile-image-large {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--purple-light);
+            font-size: 2.5rem;
+        }
+        
+        /* نوسینەکان لەسەر پاشەڕەنگی مۆرەکە */
+        .profile-header-content {
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+            z-index: 15;
+        }
+        
+        .profile-greeting-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 10px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            padding: 5px 0;
+        }
+        
+        .profile-name-header {
+            font-size: 1.3rem;
+            color: var(--white);
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            padding: 5px 0;
+        }
+        
+        /* کارتی پرۆفایل */
+        .profile-card {
+            background: var(--white);
+            margin: 20px 20px 20px;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            z-index: 20;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        
+        .balance-qr-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 0;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .balance-info {
+            flex-grow: 1;
+        }
+        
+        .balance-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        
+        .balance-amount {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            direction: ltr;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+            flex-direction: row-reverse;
+        }
+        
+        .balance-number {
+            font-size: 1.3rem;
+        }
+        
+        .balance-currency {
+            font-size: 0.85rem;
+            color: var(--text-light-gray);
+            font-weight: 500;
+        }
+        
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .qr-label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+        
+        .qr-code-placeholder {
+            width: 45px;
+            height: 45px;
+            background: var(--white);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .qr-pattern {
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, #333 25%, transparent 25%),
+                linear-gradient(-45deg, #333 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #333 75%),
+                linear-gradient(-45deg, transparent 75%, #333 75%);
+            background-size: 15px 15px;
+            background-position: 0 0, 0 7.5px, 7.5px -7.5px, -7.5px 0px;
+        }
+        
+        /* تاسکبار لە خوارەوە - گڵاس مۆرفیسم */
+        .profile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--purple-gradient);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            max-width: 450px;
+            margin: 0 auto;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+        
+        .profile-bottom-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+            z-index: -1;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 20%;
+            position: relative;
+        }
+        
+        .nav-item.active {
+            color: var(--white);
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            width: 5px;
+            height: 5px;
+            background-color: var(--white);
+            border-radius: 50%;
+        }
+        
+        .nav-item:hover {
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+        
+        .nav-icon {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .nav-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* مۆدالی کۆدی QR */
+        .qr-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .qr-modal-overlay.active {
+            display: flex;
+        }
+        
+        .qr-modal {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 300px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .qr-modal-close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .qr-modal-close:hover {
+            background-color: rgba(168, 85, 247, 0.1);
+            color: var(--purple-light);
+        }
+        
+        .qr-modal-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+        
+        .qr-modal-code {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            background: #f8f8f8;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .qr-modal-code-large {
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(45deg, #333 25%, transparent 25%),
+                linear-gradient(-45deg, #333 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #333 75%),
+                linear-gradient(-45deg, transparent 75%, #333 75%);
+            background-size: 30px 30px;
+            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+        }
+        
+        .qr-modal-info {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+        
+        /* ئەنیمەیشنەکان */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        
+        /* وەڵامدانەوەیی */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0;
+            }
+            
+            .profile-header {
+                padding: 15px 15px 90px;
+            }
+            
+            .logo-text-white {
+                font-size: 2.6rem;
+            }
+            
+            .profile-image-large-container {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .profile-image-large {
+                font-size: 2.2rem;
+            }
+            
+            .profile-greeting-header {
+                font-size: 1.4rem;
+            }
+            
+            .profile-name-header {
+                font-size: 1.2rem;
+                margin-bottom: 25px;
+            }
+            
+            .profile-card {
+                margin: 15px 15px 15px;
+                padding: 20px;
+            }
+            
+            .balance-qr-section {
+                padding: 15px;
+            }
+            
+            .balance-amount {
+                font-size: 1.1rem;
+            }
+            
+            .balance-number {
+                font-size: 1.1rem;
+            }
+            
+            .balance-currency {
+                font-size: 0.8rem;
+            }
+            
+            .qr-code-placeholder {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .qr-label {
+                font-size: 0.7rem;
+            }
+            
+            .profile-bottom-nav {
+                padding: 10px 15px;
+            }
+            
+            .nav-icon {
+                font-size: 1.2rem;
+            }
+            
+            .nav-text {
+                font-size: 0.7rem;
+            }
+            
+            .qr-modal {
+                padding: 20px;
+                max-width: 280px;
+            }
+            
+            .qr-modal-code {
+                width: 180px;
+                height: 180px;
+            }
+        }
+        
+        @media (max-width: 380px) {
+            .profile-header {
+                padding: 15px 12px 85px;
+            }
+            
+            .profile-image-large-container {
+                width: 75px;
+                height: 75px;
+                border-width: 3px;
+            }
+            
+            .profile-image-large {
+                font-size: 2rem;
+            }
+            
+            .profile-greeting-header {
+                font-size: 1.3rem;
+            }
+            
+            .profile-name-header {
+                font-size: 1.1rem;
+            }
+            
+            .profile-card {
+                margin: 12px 12px 12px;
+                padding: 18px;
+            }
+            
+            .balance-amount {
+                font-size: 1rem;
+            }
+            
+            .balance-number {
+                font-size: 1rem;
+            }
+            
+            .balance-currency {
+                font-size: 0.75rem;
+            }
+            
+            .qr-code-placeholder {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- پەڕەی پرۆفایل -->
+    <div id="profile-page" class="active-page">
+        <div class="container">
+            <!-- سەرەوەی پەڕە - گڵاس مۆرفیسم تۆختر -->
+            <div class="profile-header">
+                <div class="profile-top-bar">
+                    <div class="header-icons">
+                        <div class="header-icon" id="menuIcon">
+                            <i class="fas fa-bars"></i>
+                        </div>
+                        <div class="header-icon" id="notificationIcon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="logo-white">
+                        <div class="logo-text-white">
+                            <span class="logo-ex-white">ex</span><span class="logo-pay-white">pay</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- بازنەی پرۆفایل کە لەسەر مۆرەکە دیارە -->
+                <div class="profile-image-main-container">
+                    <div class="profile-image-large-container">
+                        <div class="profile-image-large">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- نوسینەکان لەسەر پاشەڕەنگی مۆرەکە -->
+                <div class="profile-header-content">
+                    <div class="profile-greeting-header" id="profileGreeting">ئێوارە باش</div>
+                    <div class="profile-name-header" id="profileUserName">ئەحمەد محەممەد</div>
+                </div>
+            </div>
+            
+            <!-- بەشی ناوەڕۆک -->
+            <div class="profile-content">
+                <!-- کارتی پرۆفایل -->
+                <div class="profile-card">
+                    <div class="balance-qr-section">
+                        <div class="balance-info">
+                            <div class="balance-label">بڕی باڵانس</div>
+                            <div class="balance-amount">
+                                <span class="balance-number">5,250,000</span>
+                                <span class="balance-currency">دیناری عێراقی</span>
+                            </div>
+                        </div>
+                        
+                        <div class="qr-container">
+                            <div class="qr-label">کۆدی QR</div>
+                            <div class="qr-code-placeholder" id="profileQrCode">
+                                <div class="qr-pattern"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تاسکبار لە خوارەوە - گڵاس مۆرفیسم -->
+            <div class="profile-bottom-nav">
+                <div class="nav-item active" id="navHome">
+                    <div class="nav-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="nav-text">سەرەکی</div>
+                </div>
+                
+                <div class="nav-item" id="navTransactions">
+                    <div class="nav-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="nav-text">مامەڵەکان</div>
+                </div>
+                
+                <div class="nav-item" id="navScan">
+                    <div class="nav-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <div class="nav-text">سکاندکردن</div>
+                </div>
+                
+                <div class="nav-item" id="navExchange">
+                    <div class="nav-icon">
+                        <i class="fas fa-money-bill-transfer"></i>
+                    </div>
+                    <div class="nav-text">ئاڵوگۆر</div>
+                </div>
+                
+                <div class="nav-item" id="navProfile">
+                    <div class="nav-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="nav-text">پرۆفایل</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- مۆدالی کۆدی QR -->
+    <div class="qr-modal-overlay" id="qrModalOverlay">
+        <div class="qr-modal">
+            <button class="qr-modal-close" id="qrModalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="qr-modal-title">کۆدی QR</div>
+            <div class="qr-modal-code">
+                <div class="qr-modal-code-large"></div>
+            </div>
+            <div class="qr-modal-info">
+                کۆدی QR هەژمارەکەت. ئەم کۆدە بەکاربهێنە بۆ وەرگرتنی پارە لە هەژمارەکەتەوە.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // فەنکشن بۆ نوێکردنەوەی سەلامکردن بەپێی کات
+        function updateGreeting() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            let greeting = '';
+            
+            if (currentHour >= 7 && currentHour < 11.5) {
+                greeting = 'بەیانی باش';
+            } else if (currentHour >= 11.5 && currentHour < 16) {
+                greeting = 'نیوەڕۆ باش';
+            } else if (currentHour >= 16 && currentHour < 20) {
+                greeting = 'ئێوارە باش';
+            } else if (currentHour >= 20 || currentHour < 1) {
+                greeting = 'شەو باش';
+            } else {
+                greeting = 'بەخێربێیت';
+            }
+            
+            document.getElementById('profileGreeting').textContent = greeting;
+        }
+        
+        // فەنکشن بۆ نوێکردنەوەی ناوی بەکارهێنەر
+        function updateUserName() {
+            const savedName = localStorage.getItem('userName');
+            const savedPhone = localStorage.getItem('userPhoneNumber') || '+964 770 123 4567';
+            
+            if (savedName) {
+                document.getElementById('profileUserName').textContent = savedName;
+            } else {
+                document.getElementById('profileUserName').textContent = "ئەحمەد محەممەد";
+            }
+        }
+        
+        // کاتێک پەڕە بار دەبێت
+        window.addEventListener('load', function() {
+            console.log('پەڕەی پرۆفایل بارکرا');
+            
+            updateGreeting();
+            updateUserName();
+            
+            const savedBalance = localStorage.getItem('userBalance');
+            if (savedBalance) {
+                const balanceNumber = document.querySelector('.balance-number');
+                if (balanceNumber) {
+                    balanceNumber.textContent = savedBalance;
+                }
+            }
+        });
+        
+        // ئایکۆنی مێنیو (سێ خەت)
+        document.getElementById('menuIcon').addEventListener('click', function() {
+            alert('داشبۆردی بەرنامەکە - ئەمە بەشێکە لە مێنیوی سەرەکی');
+        });
+        
+        // ئایکۆنی ئاگاداری (زەنگۆلە)
+        document.getElementById('notificationIcon').addEventListener('click', function() {
+            alert('ئەمە بەشێکە لە ئاگادارنامەکان - هیچ ئاگادارنامەیەکی نوێ نیە');
+        });
+        
+        // کارکردنی کۆدی QR
+        document.getElementById('profileQrCode').addEventListener('click', function() {
+            document.getElementById('qrModalOverlay').classList.add('active');
+        });
+        
+        // داخستنی مۆدالی کۆدی QR
+        document.getElementById('qrModalClose').addEventListener('click', function() {
+            document.getElementById('qrModalOverlay').classList.remove('active');
+        });
+        
+        // داخستنی مۆدالی کۆدی QR بە کلیککردن لەسەر پاشەڕەنگ
+        document.getElementById('qrModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+        
+        // کارکردنی تاسکبار
+        document.getElementById('navHome').addEventListener('click', function() {
+            alert('سەرەکی - گەڕانەوە بۆ پەڕەی سەرەکی');
+            this.classList.add('active');
+            document.getElementById('navTransactions').classList.remove('active');
+            document.getElementById('navScan').classList.remove('active');
+            document.getElementById('navExchange').classList.remove('active');
+            document.getElementById('navProfile').classList.remove('active');
+        });
+        
+        document.getElementById('navTransactions').addEventListener('click', function() {
+            alert('مامەڵەکان - گەڕان بۆ پەڕەی مامەڵەکان');
+            document.getElementById('navHome').classList.remove('active');
+            this.classList.add('active');
+            document.getElementById('navScan').classList.remove('active');
+            document.getElementById('navExchange').classList.remove('active');
+            document.getElementById('navProfile').classList.remove('active');
+        });
+        
+        document.getElementById('navScan').addEventListener('click', function() {
+            alert('سکاندکردن - گەڕان بۆ پەڕەی سکاندکردن');
+            document.getElementById('navHome').classList.remove('active');
+            document.getElementById('navTransactions').classList.remove('active');
+            this.classList.add('active');
+            document.getElementById('navExchange').classList.remove('active');
+            document.getElementById('navProfile').classList.remove('active');
+        });
+        
+        document.getElementById('navExchange').addEventListener('click', function() {
+            alert('ئاڵوگۆر - گەڕان بۆ پەڕەی ئاڵوگۆڕی پارە');
+            document.getElementById('navHome').classList.remove('active');
+            document.getElementById('navTransactions').classList.remove('active');
+            document.getElementById('navScan').classList.remove('active');
+            this.classList.add('active');
+            document.getElementById('navProfile').classList.remove('active');
+        });
+        
+        document.getElementById('navProfile').addEventListener('click', function() {
+            alert('پرۆفایل - ئێستا لەسەر پەڕەی پرۆفایلیت');
+            document.getElementById('navHome').classList.remove('active');
+            document.getElementById('navTransactions').classList.remove('active');
+            document.getElementById('navScan').classList.remove('active');
+            document.getElementById('navExchange').classList.remove('active');
+            this.classList.add('active');
+        });
+        
+        // فەنکشن بۆ گواستنەوەی نێوان پەڕەکان
+        function navigateTo(pageId) {
+            console.log('گواستنەوە بۆ پەڕە:', pageId);
+            
+            if (pageId === 'profile-page') {
+                updateGreeting();
+                updateUserName();
+            }
+        }
+    </script>
+</body>
+</html>
